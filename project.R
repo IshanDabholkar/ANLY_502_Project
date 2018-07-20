@@ -4,14 +4,24 @@
 #install.packages("readxl")
 #install.packages("usmap")
 #install.packages("ggmap")
-
-
+#install.packages("dplyr")
+#install.packages("neuralnet")
 library(readxl)
 library(ggplot2)
 library(quantmod)
 library(plotly)
 library(usmap)
 library(ggmap)
+library(dplyr)
+library(neuralnet)
+
+
+library(psych)
+library(pastecs)
+library(Hmisc)
+library(BSDA)
+library(magrittr)
+
 fundamentals <- read_excel("Desktop/Harrisburg/ANLY502- Analy methods1/fundamentals.xls")
 price = read_excel("Desktop/Harrisburg/ANLY502- Analy methods1/prices.xls")
 split = read_excel("Desktop/Harrisburg/ANLY502- Analy methods1/prices-split-adjusted.xls")
@@ -42,7 +52,8 @@ for(i in unique(price$symbol))
   
   sub = subset(price, price$symbol == i)
   
-  print(plot_ly(x = sub$date, type = "candlestick" , open = ~sub$open, close=  ~sub$close , high = ~sub$high,  low =  ~sub$low))
+  candleChart(sub)
+  #print(plot_ly(x = sub$date, type = "candlestick" , open = ~sub$open, close=  ~sub$close , high = ~sub$high,  low =  ~sub$low))
 }
 
 #### Distribution on USA
@@ -67,6 +78,35 @@ USAMap = ggmap(get_googlemap(center=usa_center, scale=2, zoom=4), extent="normal
 gisSector = table(security$`GICS Sector`)
 
 barplot(gisSector, xlab = "Category for stocks", ylab = "Number of stocks in a category", col = "blue")
+
+######### Analysis
+train = sample_frac(split, 0.7)
+sid = as.numeric(rownames(train)) # because rownames() returns character
+test = split[-sid,]
+
+m = lm(open~., data = train)
+
+m1 = lm(open~., data = test)
+
+p = predict(m1, test,se.fit = TRUE  )
+
+  plot(p$fit)
+
+rcor = rcorr(as.matrix(split[3:7]))
+
+r_mat = as.matrix(rcor$r)
+
+corrplot::corrplot(r_mat , win.asp = 0.8)
+
+### CORelation matrix is too strong for using any model, not sure what to do.
+
+m = neuralnet(open~ close + low + high + volume ,train , hidden = 3, linear.output = TRUE)
+
+
+print(prediction(m))
+
+print(m)
+
 
 
 
