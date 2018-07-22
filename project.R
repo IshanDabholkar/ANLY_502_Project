@@ -19,7 +19,7 @@
 #install.packages("ggmap")
 #install.packages("dplyr")
 #install.packages("neuralnet")
-
+#install.packages("treemap")
 
 ### Include the needed libraries
 
@@ -35,7 +35,7 @@ library(pastecs)
 library(Hmisc)
 library(BSDA)
 library(magrittr)
-
+library(treemap)
 
 ## Read in input files using read_excel function
 
@@ -51,6 +51,19 @@ fundamentals = fundamentals[order(fundamentals$`Ticker Symbol`),]
 security = security[order(security$`Ticker symbol`),]
 
 W = split[1:251,]
+
+
+### PLot some basic treemap to show the big companies in S&P 500 stocks
+# on the following options
+# 1. Total Asset
+# 2. Gross Profit
+# 3. Long-Term Debt
+
+treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Gross Profit")
+
+treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Total Asset")
+
+treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Liabilities")
 
 #### Candlestick pattern
 
