@@ -126,6 +126,20 @@ gisSector = table(security$`GICS Sector`)
 
 barplot(gisSector, xlab = "Category for stocks", ylab = "Number of stocks in a category", col = "blue")
 
+## Plot pie chart to show sector wise distribution
+
+pie(table(security$`GICS Sector`), main = "Sector wise distribution")
+
+## Plot pie chart for each type of sub category inside a category
+# Uniquify the sector and process
+for(i in unique(security$`GICS Sector`)) {
+  
+  subCategory = subset(security, security$`GICS Sector` == i)
+  
+  pie(table(subCategory$`GICS Sub Industry`), main = paste("Sub Sector distribution for ",i))
+  
+}
+
 ######### Analysis
 
 ## SPlit the input data 70 % and 30 % for training and testing
