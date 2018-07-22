@@ -89,27 +89,36 @@ states = security$`Address of Headquarters`
 
 
 ### Use google geocode to import the latitude and longitude of the company adress
+## This queries google server for each location
+## WARNING: it can take some time
 code = geocode(states)
 
 ### COnvert the lat and long values in a data frame
 df = as.data.frame(code)
 
-#### Get the US map--- ignore stocks outside the US for better viewing
+## remove na values if any
+df = na.omit(df)
 
-map = get_map(location = c(lon = mean(df$lon), lat = mean(df$lat)), zoom = 4,
-                      maptype = "satellite", scale = 2)
+### See the world distribution of company headquater location
 
-#### Plot the lats and long points on the US map
-ggmap(map) +
-  geom_point(data = df, aes(x = lon, y = lat, fill = "red", alpha = 0.8), size = 5, shape = 21) +
-  guides(fill=FALSE, alpha=FALSE, size=FALSE)
+qmplot(lon, lat, data = df, color =I('red'), size = I(1.3), darken = 0.3)
 
-
+#### Get the US map--- 
+### Ignore stocks outside the US for better viewing
 ## Arrange the map from the center point of US
-usa_center = as.numeric(geocode("United States"))
-USAMap = ggmap(get_googlemap(center=usa_center, scale=2, zoom=4), extent="normal")
 
+ggmap(get_map(zoom = 4, crop = TRUE, scale = 2)) + geom_density2d(data = df, aes(x = lon, y = lat), size = 0.3) + 
+  stat_density2d(data = df, 
+                 aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, 
+                 bins = 16, geom = "polygon") + scale_fill_gradient(low = "green", high = "red") + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
 
+### Cmparing the bay area geographical wise
+ggmap(get_map(zoom = 9, crop = TRUE, scale = 2, location = "San Francisco")) + geom_density2d(data = df, aes(x = lon, y = lat), size = 0.3) + 
+  stat_density2d(data = df, 
+                 aes(x = lon, y = lat, fill = ..level.., alpha = ..level..), size = 0.01, 
+                 bins = 16, geom = "polygon") + scale_fill_gradient(low = "green", high = "red") + 
+  scale_alpha(range = c(0, 0.3), guide = FALSE)
 ##### Distribution of companies based on sector
 
 ## Plot the different types of sector of stocks in S&P 500
