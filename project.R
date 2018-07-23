@@ -188,14 +188,15 @@ predict_linear_model_test = predict(linear_model_train, test , se.fit = TRUE)
 ## Import caret library to compare the result of predictive value vs expected values
 library(caret)
 
-compareResult_linear_model = postResample(predict_linear_model_train$fit, test$open)
+compareResult_linear_model = postResample(predict_linear_model_test$fit, test$open)
 
 ### Predict the future values using neural models
 
 ## Import the nnet library for Neural net modelling
 library(nnet)
 
-nnet_model_train = nnet( open~. , train)
+nnet_model_train = nnet(open ~ ., data= train,size=10, linout=TRUE, skip=TRUE, 
+                        MaxNWts=10000, trace=FALSE, maxit=100)
 
 ## Predict the values using the nnet model on test data (30 % data)
 predict_test = predict(nnet_model_train, test)
@@ -225,8 +226,9 @@ for(i in unique(train$symbol))
   ## Plot the new (predicted) values from the nnet model, which was appending in the data frame above
   print(plot(sub$predicted_open , type ="o", main = cbind("Predicted Close of ", i) , col = "blue"))
   
+  
+  ## Use PostResample function, from library caret to caompare the predicted and expected values
+  
+  compareResult = postResample(sub$open, sub$predicted_open)
+  
 }
-
-## Use PostResample function, from library caret to caompare the predicted and expected values
-
-compareResult = postResample(sub$open, sub$predicted_open)
