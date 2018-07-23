@@ -65,6 +65,18 @@ treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Total Asset")
 
 treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Liabilities")
 
+#### Extract the sector and sub-sector depnding on the frequency of occurance in data table "Security"
+table_sector_subsector =table(security$`GICS Sector`, security$`GICS Sub Industry`)
+
+### Convert the table to data frame
+df_sector_freq = as.data.frame(table_sector_subsector)
+
+## Plot the treemap to show the distribution of sectors in S&P 500 stocks wrt to frequency
+
+## NOTE: frequency is the count of stock belonging to each sub sector
+
+treemap(df_sector_freq, index = c("Var1", "Var2"), vSize = "Freq")
+
 #### Candlestick pattern
 
 #### Part 1- Table can have multiple rows of same symbol
