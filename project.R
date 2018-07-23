@@ -55,15 +55,15 @@ W = split[1:251,]
 
 ### PLot some basic treemap to show the big companies in S&P 500 stocks
 # on the following options
-# 1. Total Asset
+# 1. Total Assets
 # 2. Gross Profit
 # 3. Long-Term Debt
 
 treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Gross Profit")
 
-treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Total Asset")
+treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Total Assets")
 
-treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Liabilities")
+#treemap(fundamentals, index = c('Ticker Symbol'), vSize = "Liabilities")
 
 #### Extract the sector and sub-sector depnding on the frequency of occurance in data table "Security"
 table_sector_subsector =table(security$`GICS Sector`, security$`GICS Sub Industry`)
